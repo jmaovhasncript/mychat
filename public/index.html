@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+     <link rel="stylesheet" href="chat.css">
+    <script src="socket.js"></script>
+</head>
+<body>
+
+ <div id="chatContainer">
+     <div id="notification"></div>
+      <div id="nameBoard"></div>
+     <div class="initial">
+         <div>Enter your name</div>
+     <div id="nameContainer"> </div>
+     <input id="nameInput" type="text" placeholder="Name"><button id="nameSubmit" type="button">Submit</button>
+         <div>To chat </div>
+     </div>
+     <div id="chatparent">
+         Chat
+     <div id="chatWindow">
+
+     </div>
+     </div>
+     <div id="chatBox">
+         <label for="chatInp">chat  </label> <input id="chatInp" type="text"><button id="submit" type="button">Submit</button>
+     </div>
+ </div>
+
+<script>
+    var socket = io();
+    var button = document.querySelector('#nameSubmit');
+    var input = document.querySelector('#nameInput');
+    var nameBoard = document.querySelector('#nameBoard');
+    var initial = document.querySelector('.initial');
+    var chatBox = document.querySelector('#chatBox');
+    var chatWindow = document.querySelector('#chatWindow');
+
+    var chatSubbmit = document.querySelector('#submit');
+    var chatInput = document.querySelector('#chatInp');
+    chatSubbmit.addEventListener('click' ,function(){
+
+        emitEvent();
+    });
+    function emitEvent(){
+        socket.emit("chatMessage", chatInput.value);
+
+        var ele = document.createElement('div');
+        ele.innerText = input.value +" : " + chatInput.value ;
+        chatInput.value = "";
+        chatInput.focus();
+        chatWindow.appendChild(ele);
+    }
+
+    button.addEventListener('click',function(){
+        nameBoard.innerText = "welcome " + input.value;
+        socket.emit("userName" ,input.value);
+        initial.style.display = "none" ;
+        chatBox.style.display = "block";
+        chatWindow.parentNode.style.display = "block"
+;
+    });
+    socket.on('userName' ,function(name){
+        var notif = document.querySelector("#notification");
+        notif.innerText = name+" has joined";
+
+    });
+
+    socket.on('chatMsg',function(msgObj){
+            var ele = document.createElement('div');
+            ele.innerText =msgObj.name + " : " + msgObj.msg;
+            chatWindow.appendChild(ele);
+    })
+
+
+
+</script>
+
+</body>
+</html>
