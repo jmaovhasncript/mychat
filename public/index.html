@@ -24,7 +24,7 @@
      </div>
      </div>
      <div id="chatBox">
-         <label for="chatInp">chat  </label> <input id="chatInp" type="text"><button id="submit" type="button">Submit</button>
+         <label for="chatInp">chat  </label> <textarea id="chatInp" name="textarea" rows="2" cols="20">Write something here</textarea><button id="submit" type="button">Submit</button>
      </div>
  </div>
 
@@ -37,12 +37,21 @@
     var chatBox = document.querySelector('#chatBox');
     var chatWindow = document.querySelector('#chatWindow');
 
+
     var chatSubbmit = document.querySelector('#submit');
     var chatInput = document.querySelector('#chatInp');
     chatSubbmit.addEventListener('click' ,function(){
 
         emitEvent();
     });
+
+    chatInput.addEventListener('keydown',function(){
+        socket.emit("typing", true);
+    })
+
+
+
+
     function emitEvent(){
         socket.emit("chatMessage", chatInput.value);
 
@@ -58,8 +67,7 @@
         socket.emit("userName" ,input.value);
         initial.style.display = "none" ;
         chatBox.style.display = "block";
-        chatWindow.parentNode.style.display = "block"
-;
+        chatWindow.parentNode.style.display = "block";
     });
     socket.on('userName' ,function(name){
         var notif = document.querySelector("#notification");
@@ -71,7 +79,12 @@
             var ele = document.createElement('div');
             ele.innerText =msgObj.name + " : " + msgObj.msg;
             chatWindow.appendChild(ele);
-    })
+    });
+
+    socket.on('typing' ,function(name){
+        console.log(name)
+        chatInput.value = name + " is typing";
+    });
 
 
 

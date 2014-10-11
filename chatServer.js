@@ -23,6 +23,13 @@ io.on('connection', function(socket){
 		}
 
 		socket.broadcast.emit("chatMsg",chatObj);
+	});
+
+	socket.on("typing" ,function(status){
+		console.log(socket.name +" is typing")
+		if(status){
+			socket.broadcast.emit("typing",socket.name);
+		}
 	})
 });
 
